@@ -1,0 +1,39 @@
+
+@model TaskFlowWeb.Models.Tarefa
+
+@{
+    ViewData["Title"] = "Nova tarefa";
+}
+
+<div class="container mt-4">
+    <h1>Nova tarefa</h1>
+
+    <form action="/Tarefas/Create" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label for="Titulo" class="form-label">
+                Título da tarefa
+            </label>
+
+            <input type="text"
+                   id="Titulo"
+                   name="Titulo"
+                   class="form-control"
+                   placeholder="Ex.: Estudar C#"
+                   maxlength="150"
+                   required />
+
+            <span asp-validation-for="Titulo"
+                  class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Cadastrar tarefa
+        </button>
+
+        <a href="/Tarefas" class="btn btn-secondary">
+            Cancelar
+        </a>
+    </form>
+</div>

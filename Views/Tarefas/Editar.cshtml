@@ -1,0 +1,43 @@
+@model TaskFlowWeb.Models.Tarefa
+
+@{
+    ViewData["Title"] = "Editar Tarefa";
+}
+
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h1 class="mb-4">Editar Tarefa</h1>
+
+            <form action="/Tarefas/Editar" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="Id" value="@Model.Id" />
+
+                <div class="mb-3">
+                    <label for="Titulo" class="form-label">
+                        Título da tarefa
+                    </label>
+
+                    <input type="text" id="Titulo" name="Titulo" value="@Model.Titulo" class="form-control"
+                           maxlength="150" required />
+
+                    @Html.ValidationMessage(
+                        "Titulo",
+                        null,
+                        new { @class = "text-danger" }
+                    )
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Salvar alterações
+                </button>
+
+                <a href="/Tarefas" class="btn btn-secondary">
+                    Cancelar
+                </a>
+            </form>
+        </div>
+    </div>
+</div>

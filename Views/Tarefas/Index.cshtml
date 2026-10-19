@@ -1,0 +1,89 @@
+@model IEnumerable<TaskFlowWeb.Models.Tarefa>
+
+@{
+    ViewData["Title"] = "Minhas Tarefas";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1>Minhas Tarefas</h1>
+            <p class="text-muted">Organize suas atividades com o TaskFlow.</p>
+        </div>
+
+        <a href="/Tarefas/Create" class="btn btn-primary">
+            + Nova tarefa
+        </a>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            Você ainda não possui tarefas cadastradas.
+        </div>
+    }
+    else
+    {
+        <div class="card shadow-sm">
+            <div class="card-body">
+                @foreach (var tarefa in Model)
+                {
+                    <div class="d-flex justify-content-between align-items-center border-bottom py-3 gap-3">
+                        <div>
+                            <h5 class="mb-2 @(tarefa.Concluida ? "text-decoration-line-through text-muted" : "")">
+                                @tarefa.Titulo
+                            </h5>
+
+                            @if (tarefa.Concluida)
+                            {
+                                <span class="badge bg-success">Concluída</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning text-dark">Pendente</span>
+                            }
+                        </div>
+
+                        <div class="d-flex gap-2 flex-wrap">
+                            <form action="/Tarefas/AlternarConclusao" method="post">
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden" name="id" value="@tarefa.Id" />
+
+                                @if (tarefa.Concluida)
+                                {
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                        Reabrir
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        Concluir
+                                    </button>
+                                }
+                            </form>
+
+                            <form action="/Tarefas/Excluir" method="post"
+                                  onsubmit="return confirm('Tem certeza que deseja excluir esta tarefa?');">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden" name="id" value="@tarefa.Id" />
+
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    Excluir
+                                </button>
+                                
+                                <a href="/Tarefas/Editar?id=@tarefa.Id" class="btn btn-primary btn-sm">
+                                    Editar
+                                </a>
+
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
