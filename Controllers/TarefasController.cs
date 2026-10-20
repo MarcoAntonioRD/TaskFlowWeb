@@ -15,9 +15,34 @@ public class TarefasController : Controller
         _context = context;
     }
 
-    public IActionResult Index()
+    public IActionResult Index(string? busca, string prioridade, string? status)
     {
-        var tarefas = _context.Tarefas.ToList();
+        var consulta = _context.Tarefas.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(busca))
+        {
+            consulta = consulta.Where(t => 
+            t.Titulo.Contains(busca.Trim()));
+        }
+
+        if (Enum.TryParse<PrioridadeTarefa>(
+            prioridade, true, out var prioridadeSelecionada)
+            && Enum.IsDefined(typeof(PrioridadeTarefa), prioridadeSelecionada))
+        {
+            consulta = consulta.Where(t => t.Prioridade == prioridadeSelecionada);
+        }
+
+        if (status == "Pendente")
+        {
+            consulta = consulta.Where(t => t.Concluida);
+        }
+
+        ViewBag.Buscar = busca;
+        ViewBag.Prioridade = prioridade;
+        ViewBag.Status = status;
+
+        var tarefas = consulta.ToList();
+
         return View(tarefas);
     }
 
