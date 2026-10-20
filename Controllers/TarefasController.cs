@@ -1,37 +1,23 @@
 
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using TaskFlowWeb.Data;
 using TaskFlowWeb.Models;
 
 namespace TaskFlowWeb.Controllers;
 
 public class TarefasController : Controller
 {
-    public static readonly List<Tarefa> tarefas = new()
+    private readonly AppDbContext _context;
+
+    public TarefasController(AppDbContext context)
     {
-        new Tarefa
-        {
-            Id = 1,
-            Titulo = "Estudar C#",
-            Concluida = false
-        },
-        new Tarefa
-        {
-            Id = 2,
-            Titulo = "Aprender ASP.NET Core MVC",
-            Concluida = true
-        },
-        new Tarefa
-        {
-            Id = 3,
-            Titulo = "Criar a tela do TaskFlow",
-            Concluida = false
-        }
-    };
+        _context = context;
+    }
 
     public IActionResult Index()
     {
+        var tarefas = _context.Tarefas.ToList();
         return View(tarefas);
     }
 
@@ -58,14 +44,11 @@ public class TarefasController : Controller
             return View(tarefa);
         }
 
-        tarefa.Id = tarefas.Count == 0
-            ? 1
-            : tarefas.Max(t => t.Id) + 1;
-
         tarefa.Titulo = tarefa.Titulo.Trim();
         tarefa.Concluida = false;
 
-        tarefas.Add(tarefa);
+        _context.Tarefas.Add(tarefa);
+        _context.SaveChanges();
 
         return RedirectToAction(nameof(Index));
     }
@@ -74,7 +57,7 @@ public class TarefasController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult AlternarConclusao(int id)
     {
-        var tarefa = tarefas.FirstOrDefault(t => t.Id == id);
+        var tarefa = _context.Tarefas.FirstOrDefault(t => t.Id == id);
 
         if (tarefa == null)
         {
@@ -83,56 +66,50 @@ public class TarefasController : Controller
 
         tarefa.Concluida = !tarefa.Concluida;
 
+        _context.SaveChanges();
+
         return RedirectToAction(nameof(Index));
     }
-
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult Excluir(int id)
     {
-        var tarefa = tarefas.FirstOrDefault(t => t.Id == id);
+        var tarefa = _context.Tarefas.FirstOrDefault(t => t.Id == id);
 
         if (tarefa == null)
         {
             return NotFound();
         }
 
-        tarefas.Remove(tarefa);
+        _context.Tarefas.Remove(tarefa);
+        _context.SaveChanges();
 
         return RedirectToAction(nameof(Index));
     }
 
-
     [HttpGet]
     public IActionResult Editar(int id)
     {
-        var tarefa = tarefas.FirstOrDefault(t => t.Id == id);
+        var tarefa = _context.Tarefas.FirstOrDefault(t => t.Id == id);
 
         if (tarefa == null)
         {
-            return RedirectToAction(nameof(Index));
+            return NotFound();
         }
 
         return View(tarefa);
     }
 
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult Editar(Tarefa tarefa)
     {
-        var tarefaExistente = tarefas.FirstOrDefault(t => t.Id == tarefa.Id);
-
-        if (tarefaExistente == null)
-        {
-            return NotFound();
-        }
-
         if (string.IsNullOrWhiteSpace(tarefa.Titulo))
         {
-            ModelState.AddModelError(nameof(tarefa.Titulo),
-            "Digite o titulo da terefa"
+            ModelState.AddModelError(
+                nameof(tarefa.Titulo),
+                "Digite o título da tarefa."
             );
         }
 
@@ -141,9 +118,18 @@ public class TarefasController : Controller
             return View(tarefa);
         }
 
+        var tarefaExistente = _context.Tarefas
+            .FirstOrDefault(t => t.Id == tarefa.Id);
+
+        if (tarefaExistente == null)
+        {
+            return NotFound();
+        }
+
         tarefaExistente.Titulo = tarefa.Titulo.Trim();
+
+        _context.SaveChanges();
 
         return RedirectToAction(nameof(Index));
     }
-
 }
