@@ -17,4 +17,4 @@ Properties/
 
 # Arquivos do sistema operacional
 .DS_Store
-*.taskflow.db
+taskflow.db
