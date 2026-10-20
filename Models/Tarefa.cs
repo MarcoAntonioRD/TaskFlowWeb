@@ -2,14 +2,23 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TaskFlowWeb.Models;
 
+public enum PrioridadeTarefa
+{
+    Media = 0,
+    Baixa = 1,
+    Alta = 2,
+}
+
 public class Tarefa
 {
-    public int Id { get; set; }
+    public int Id {get;  set;}
 
-    [Required(ErrorMessage = "O título é obrigatório.")]
-    [StringLength(150, ErrorMessage ="O título deve ter no máximo 150 caracteres.")]
+    [Required(ErrorMessage = "Digite o titúlo da tarefa.")]
+    [StringLength(150)]
+    public string Titulo {get; set;} = string.Empty;
 
-    public String Titulo { get; set; } = string.Empty;
+    public bool Concluida {get; set;}
 
-    public bool Concluida { get;  set; }
+    public PrioridadeTarefa Prioridade {get; set;} = PrioridadeTarefa.Media;
+
 }

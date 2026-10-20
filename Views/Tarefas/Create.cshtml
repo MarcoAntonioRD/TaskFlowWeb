@@ -22,10 +22,36 @@
                    class="form-control"
                    placeholder="Ex.: Estudar C#"
                    maxlength="150"
+                   value="@Model.Titulo"
                    required />
 
             <span asp-validation-for="Titulo"
                   class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label for="Prioridade" class="form-label">
+                Prioridade
+            </label>
+
+            <select id="Prioridade"
+                    name="Prioridade"
+                    class="form-select">
+                <option value="Baixa"
+                    selected="@(Model.Prioridade == TaskFlowWeb.Models.PrioridadeTarefa.Baixa)">
+                    Baixa
+                </option>
+
+                <option value="Media"
+                    selected="@(Model.Prioridade == TaskFlowWeb.Models.PrioridadeTarefa.Media)">
+                    Média
+                </option>
+
+                <option value="Alta"
+                    selected="@(Model.Prioridade == TaskFlowWeb.Models.PrioridadeTarefa.Alta)">
+                    Alta
+                </option>
+            </select>
         </div>
 
         <button type="submit" class="btn btn-primary">

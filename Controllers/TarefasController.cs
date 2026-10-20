@@ -127,6 +127,7 @@ public class TarefasController : Controller
         }
 
         tarefaExistente.Titulo = tarefa.Titulo.Trim();
+        tarefaExistente.Prioridade = tarefa.Prioridade;
 
         _context.SaveChanges();
 

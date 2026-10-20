@@ -1,3 +1,4 @@
+
 @model IEnumerable<TaskFlowWeb.Models.Tarefa>
 
 @{
@@ -34,13 +35,32 @@
                                 @tarefa.Titulo
                             </h5>
 
+                            @switch (tarefa.Prioridade)
+                            {
+                                case TaskFlowWeb.Models.PrioridadeTarefa.Baixa:
+                                    <span class="badge bg-info text-dark">Prioridade baixa</span>
+                                    break;
+
+                                case TaskFlowWeb.Models.PrioridadeTarefa.Media:
+                                    <span class="badge bg-warning text-dark">Prioridade média</span>
+                                    break;
+
+                                case TaskFlowWeb.Models.PrioridadeTarefa.Alta:
+                                    <span class="badge bg-danger">Prioridade alta</span>
+                                    break;
+
+                                default:
+                                    <span class="badge bg-warning text-dark">Prioridade média</span>
+                                    break;
+                            }
+
                             @if (tarefa.Concluida)
                             {
                                 <span class="badge bg-success">Concluída</span>
                             }
                             else
                             {
-                                <span class="badge bg-warning text-dark">Pendente</span>
+                                <span class="badge bg-secondary">Pendente</span>
                             }
                         </div>
 
@@ -64,6 +84,11 @@
                                 }
                             </form>
 
+                            <a href="/Tarefas/Editar?id=@tarefa.Id"
+                               class="btn btn-primary btn-sm">
+                                Editar
+                            </a>
+
                             <form action="/Tarefas/Excluir" method="post"
                                   onsubmit="return confirm('Tem certeza que deseja excluir esta tarefa?');">
 
@@ -74,11 +99,6 @@
                                 <button type="submit" class="btn btn-danger btn-sm">
                                     Excluir
                                 </button>
-                                
-                                <a href="/Tarefas/Editar?id=@tarefa.Id" class="btn btn-primary btn-sm">
-                                    Editar
-                                </a>
-
                             </form>
                         </div>
                     </div>
