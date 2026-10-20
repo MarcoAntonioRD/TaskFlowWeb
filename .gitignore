@@ -2,6 +2,7 @@
 # Arquivos gerados pelo .NET
 bin/
 obj/
+Properties/
 
 # Configurações locais do Visual Studio
 .vs/
