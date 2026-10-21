@@ -121,7 +121,3 @@ Algumas funcionalidades que podem ser implementadas em versões futuras:
 **Marco Antonio**
 
 GitHub: [MarcoAntonioRD](https://github.com/MarcoAntonioRD)
-
----
-
-Este projeto foi desenvolvido para fins de estudo e prática, com foco no aprendizado de desenvolvimento web, organização de código e construção de aplicações utilizando tecnologias do ecossistema .NET.

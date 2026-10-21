@@ -8,8 +8,7 @@
 <div class="container mt-4">
     <h1>Nova tarefa</h1>
 
-    <form action="/Tarefas/Create" method="post">
-        @Html.AntiForgeryToken()
+    <form asp-controller="Tarefas" asp-action="Create" method="post">
 
         <div class="mb-3">
             <label for="Titulo" class="form-label">
@@ -58,7 +57,7 @@
             Cadastrar tarefa
         </button>
 
-        <a href="/Tarefas" class="btn btn-secondary">
+        <a asp-controller="Tarefas" asp-action="Index" class="btn btn-secondary">
             Cancelar
         </a>
     </form>

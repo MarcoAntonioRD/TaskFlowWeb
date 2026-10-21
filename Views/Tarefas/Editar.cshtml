@@ -10,8 +10,7 @@
             <div class="card-body">
                 <h1 class="mb-4">Editar Tarefa</h1>
 
-                <form action="/Tarefas/Editar" method="post">
-                    @Html.AntiForgeryToken()
+                <form asp-controller="Tarefas" asp-action="Editar" method="post">
 
                     <input type="hidden" name="Id" value="@Model.Id" />
 
@@ -34,7 +33,7 @@
                         Salvar alterações
                     </button>
 
-                    <a href="/Tarefas" class="btn btn-secondary">
+                    <a asp-controller="Tarefas" asp-action="Index" class="btn btn-secondary">
                         Cancelar
                     </a>
                 </form>

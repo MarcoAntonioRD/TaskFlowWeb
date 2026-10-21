@@ -1,185 +1,277 @@
-
 @model IEnumerable<TaskFlowWeb.Models.Tarefa>
 
 @{
-    ViewData["Title"] = "Minhas Tarefas";
+    ViewData["Title"] = "Dashboard - TaskFlow";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="tf-dashboard">
+    <header class="tf-header">
         <div>
-            <h1>Minhas Tarefas</h1>
-            <p class="text-muted">Organize suas atividades com o TaskFlow.</p>
+            <span class="tf-eyebrow"></span>
+            <h1>Minhas tarefas</h1>
+            <p>Acompanhe suas tarefas e mantenha tudo em ordem.</p>
         </div>
 
-        <a href="/Tarefas/Create" class="btn btn-primary">
-            + Nova tarefa
+        <a asp-controller="Tarefas" asp-action="Create" class="tf-button tf-button-primary tf-button-nova-tarefa">
+            <span>+</span> Nova tarefa
         </a>
-    </div>
+        <hr>
+    </header>
 
-    <!-- Pesquisa e filtros -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-            <form action="/Tarefas/Index" method="get">
-                <div class="row g-3">
-                    <div class="col-md-5">
-                        <label for="busca" class="form-label">
-                            Pesquisar tarefa
-                        </label>
+    <section class="tf-stats">
+        <article class="tf-stat">
+            <div class="tf-stat-top">
+                <span>Total de tarefas</span>
+                <span class="tf-stat-icon icon-blue material-symbols-outlined" aria-hidden="true">checklist</span>
+            </div>
+            <strong>@ViewBag.TotalTarefas</strong>
+            <small>Todas as suas tarefas</small>
+        </article>
 
-                        <input type="text"
-                               id="busca"
-                               name="busca"
-                               class="form-control"
-                               placeholder="Digite o título..."
-                               value="@ViewBag.Busca" />
-                    </div>
+        <article class="tf-stat">
+            <div class="tf-stat-top">
+                <span>Pendentes</span>
+                <span class="tf-stat-icon icon-orange material-symbols-outlined" aria-hidden="true">schedule</span>
+            </div>
+            <strong>@ViewBag.Pendentes</strong>
+            <small>Aguardando conclusão</small>
+        </article>
 
-                    <div class="col-md-3">
-                        <label for="prioridade" class="form-label">
-                            Prioridade
-                        </label>
+        <article class="tf-stat">
+            <div class="tf-stat-top">
+                <span>Concluídas</span>
+                <span class="tf-stat-icon icon-green material-symbols-outlined" aria-hidden="true">task_alt</span>
+            </div>
+            <strong>@ViewBag.Concluidas</strong>
+            <small>Tarefas finalizadas</small>
+        </article>
 
-                        <select id="prioridade"
-                                name="prioridade"
-                                class="form-select">
-                            <option value="">Todas</option>
-                            <option value="Baixa"
-                                    selected="@(ViewBag.Prioridade as string == "Baixa")">
-                                Baixa
-                            </option>
-                            <option value="Media"
-                                    selected="@(ViewBag.Prioridade as string == "Media")">
-                                Média
-                            </option>
-                            <option value="Alta"
-                                    selected="@(ViewBag.Prioridade as string == "Alta")">
-                                Alta
-                            </option>
-                        </select>
-                    </div>
+        <article class="tf-stat">
+            <div class="tf-stat-top">
+                <span>Prioridade alta</span>
+                <span class="tf-stat-icon icon-red material-symbols-outlined" aria-hidden="true">priority_high</span>
+            </div>
+            <strong>@ViewBag.PrioridadeAlta</strong>
+            <small>Tarefas que exigem atenção</small>
+        </article>
+    </section>
 
-                    <div class="col-md-4">
-                        <label for="status" class="form-label">
-                            Situação
-                        </label>
-
-                        <select id="status"
-                                name="status"
-                                class="form-select">
-                            <option value="">Todas</option>
-                            <option value="pendente"
-                                    selected="@(ViewBag.Status as string == "pendente")">
-                                Pendentes
-                            </option>
-                            <option value="concluida"
-                                    selected="@(ViewBag.Status as string == "concluida")">
-                                Concluídas
-                            </option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="d-flex gap-2 mt-3">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-search"></i> Filtrar
-                    </button>
-
-                    <a href="/Tarefas" class="btn btn-outline-secondary">
-                        Limpar filtros
-                    </a>
-                </div>
-            </form>
+    <section class="tf-panel">
+        <div class="tf-panel-heading">
+            <div>
+                <h2>Gerencie suas tarefas</h2>
+                <p>Pesquise, filtre e organize suas tarefas.</p>
+            </div>
         </div>
-    </div>
 
-    @if (Model == null || !Model.Any())
-    {
-        <div class="alert alert-info">
-            Nenhuma tarefa encontrada com os filtros selecionados.
+        <form asp-controller="Tarefas" asp-action="Index" method="get" class="tf-filters">
+            <div class="tf-field tf-search">
+                <label for="busca" class="visually-hidden">Buscar tarefas</label>
+                <input type="text" id="busca" name="busca" placeholder="Buscar pelo título..." value="@ViewBag.Busca" />
+            </div>
+
+            <div class="tf-field">
+                <label for="prioridade">Prioridade</label>
+                <select id="prioridade" name="prioridade">
+                    <option value="">Todas</option>
+                    <option value="Baixa" selected="@(ViewBag.Prioridade as string == "Baixa")">
+                        Baixa
+                    </option>
+                    <option value="Media" selected="@(ViewBag.Prioridade as string == "Media")">
+                        Média
+                    </option>
+                    <option value="Alta" selected="@(ViewBag.Prioridade as string == "Alta")">
+                        Alta
+                    </option>
+                </select>
+            </div>
+
+            <div class="tf-field">
+                <label for="status">Situação</label>
+                <select id="status" name="status">
+                    <option value="">Todas</option>
+                    <option value="pendente" selected="@(ViewBag.Status as string == "pendente")">
+                        Pendentes
+                    </option>
+                    <option value="concluida" selected="@(ViewBag.Status as string == "concluida")">
+                        Concluídas
+                    </option>
+                </select>
+            </div>
+
+            <div class="tf-filter-actions">
+                <button type="submit" class="tf-button tf-button-primary">
+                    Filtrar
+                </button>
+                <a asp-controller="Tarefas" asp-action="Index" class="tf-button tf-button-light">
+                    Limpar
+                </a>
+            </div>
+        </form>
+
+        <div class="tf-list-heading">
+            <h3>Lista de tarefas</h3>
+            <span>
+                @ViewBag.TotalTarefasFiltradas
+                @(ViewBag.TotalTarefasFiltradas == 1 ? "tarefa encontrada" : "tarefas encontradas")
+            </span>
         </div>
-    }
-    else
-    {
-        <div class="card shadow-sm">
-            <div class="card-body">
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="tf-empty">
+                <div class="tf-empty-icon ">✓</div>
+                <h3>Nenhuma tarefa encontrada</h3>
+                <p>Experimente alterar os filtros ou crie uma nova tarefa.</p>
+                <a asp-controller="Tarefas" asp-action="Create" class="tf-button tf-button-primary">
+                    Criar tarefa
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="tf-task-list">
                 @foreach (var tarefa in Model)
                 {
-                    <div class="d-flex justify-content-between align-items-center border-bottom py-3 gap-3">
-                        <div>
-                            <h5 class="mb-2 @(tarefa.Concluida ? "text-decoration-line-through text-muted" : "")">
-                                @tarefa.Titulo
-                            </h5>
+                    <article class="tf-task">
+                        <div class="tf-task-main">
+                            <span class="tf-task-marker material-symbols-outlined  @(tarefa.Concluida ? "marker-done" : "")">
+                                @(tarefa.Concluida ? "check" : "")
+                            </span>
 
-                            @switch (tarefa.Prioridade)
-                            {
-                                case TaskFlowWeb.Models.PrioridadeTarefa.Baixa:
-                                    <span class="badge bg-info text-dark">Prioridade baixa</span>
-                                    break;
+                            <div class="tf-task-info ">
+                                <h4 class="@(tarefa.Concluida ? "task-completed" : "")">
+                                    @tarefa.Titulo
+                                </h4>
 
-                                case TaskFlowWeb.Models.PrioridadeTarefa.Media:
-                                    <span class="badge bg-warning text-dark">Prioridade média</span>
-                                    break;
-
-                                case TaskFlowWeb.Models.PrioridadeTarefa.Alta:
-                                    <span class="badge bg-danger">Prioridade alta</span>
-                                    break;
-
-                                default:
-                                    <span class="badge bg-warning text-dark">Prioridade média</span>
-                                    break;
-                            }
-
-                            @if (tarefa.Concluida)
-                            {
-                                <span class="badge bg-success">Concluída</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-secondary">Pendente</span>
-                            }
-                        </div>
-
-                        <div class="d-flex gap-2 flex-wrap">
-                            <form action="/Tarefas/AlternarConclusao" method="post">
-                                @Html.AntiForgeryToken()
-
-                                <input type="hidden" name="id" value="@tarefa.Id" />
+                                @switch (tarefa.Prioridade)
+                                {
+                                    case TaskFlowWeb.Models.PrioridadeTarefa.Baixa:
+                                        <span class="tf-badge priority-low">Prioridade baixa</span>
+                                        break;
+                                    case TaskFlowWeb.Models.PrioridadeTarefa.Media:
+                                        <span class="tf-badge priority-medium">Prioridade média</span>
+                                        break;
+                                    case TaskFlowWeb.Models.PrioridadeTarefa.Alta:
+                                        <span class="tf-badge priority-high">Prioridade alta</span>
+                                        break;
+                                    default:
+                                        <span class="tf-badge priority-medium">Prioridade média</span>
+                                        break;
+                                }
 
                                 @if (tarefa.Concluida)
                                 {
-                                    <button type="submit" class="btn btn-outline-secondary btn-sm">
-                                        Reabrir
-                                    </button>
+                                    <span class="tf-badge status-done">Concluída</span>
                                 }
                                 else
                                 {
-                                    <button type="submit" class="btn btn-success btn-sm">
-                                        Concluir
-                                    </button>
+                                    <span class="tf-badge status-pending">Pendente</span>
                                 }
+                            </div>
+                        </div>
+
+                        <div class="tf-task-actions">
+                            <form asp-controller="Tarefas" asp-action="AlternarConclusao" method="post">
+                                <input type="hidden" name="id" value="@tarefa.Id" />
+                                <input type="hidden" name="pagina" value="@ViewBag.PaginaAtual" />
+                                <input type="hidden" name="busca" value="@ViewBag.Busca" />
+                                <input type="hidden" name="prioridade" value="@ViewBag.Prioridade" />
+                                <input type="hidden" name="status" value="@ViewBag.Status" />
+                                <button type="submit"
+                                        class="tf-button tf-button-light tf-button-small @(tarefa.Concluida ? "" : "tf-button-complete")">
+                                    @(tarefa.Concluida ? "Reabrir" : "Concluir")
+                                </button>
                             </form>
 
-                            <a href="/Tarefas/Editar?id=@tarefa.Id"
-                               class="btn btn-primary btn-sm">
+                            <a asp-controller="Tarefas" asp-action="Editar" asp-route-id="@tarefa.Id"
+                               class="tf-button tf-button-light tf-button-small tf-button-edit">
                                 Editar
                             </a>
 
-                            <form action="/Tarefas/Excluir" method="post"
-                                  onsubmit="return confirm('Tem certeza que deseja excluir esta tarefa?');">
-
-                                @Html.AntiForgeryToken()
-
+                            <form asp-controller="Tarefas" asp-action="Excluir" method="post"
+                                  onsubmit="return confirm('Deseja realmente excluir esta tarefa?');">
                                 <input type="hidden" name="id" value="@tarefa.Id" />
-
-                                <button type="submit" class="btn btn-danger btn-sm">
+                                <input type="hidden" name="pagina" value="@ViewBag.PaginaAtual" />
+                                <input type="hidden" name="busca" value="@ViewBag.Busca" />
+                                <input type="hidden" name="prioridade" value="@ViewBag.Prioridade" />
+                                <input type="hidden" name="status" value="@ViewBag.Status" />
+                                <button type="submit" class="tf-button tf-button-delete tf-button-small">
                                     Excluir
                                 </button>
                             </form>
                         </div>
-                    </div>
+                    </article>
                 }
             </div>
-        </div>
-    }
+        }
+
+        <partial name="_Paginacao" />
+    </section>
+
+    <footer class="tf-footer">
+        <p>TaskFlow <span>·</span> Organize suas tarefas, avance nos seus objetivos.</p>
+        <small>&copy; @DateTime.Now.Year TaskFlow.</small>
+    </footer>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("submit", async event => {
+            const form = event.target;
+            if (!(form instanceof HTMLFormElement) ||
+                !form.matches(".tf-task-actions form") ||
+                event.defaultPrevented) {
+                return;
+            }
+
+            event.preventDefault();
+            const submitButton = event.submitter;
+            if (submitButton instanceof HTMLButtonElement) {
+                submitButton.disabled = true;
+            }
+
+            try {
+                const response = await fetch(form.action, {
+                    method: form.method,
+                    body: new FormData(form),
+                    credentials: "same-origin"
+                });
+
+                if (!response.ok) {
+                    throw new Error(`A solicitação falhou (HTTP ${response.status}).`);
+                }
+
+                const responseHtml = await response.text();
+                const updatedDocument = new DOMParser().parseFromString(responseHtml, "text/html");
+                const updatedDashboard = updatedDocument.querySelector(".tf-dashboard");
+                const currentDashboard = document.querySelector(".tf-dashboard");
+
+                if (!updatedDashboard || !currentDashboard) {
+                    throw new Error("Não foi possível atualizar o painel de tarefas.");
+                }
+
+                const updatedUrl = new URL(response.url);
+                if (updatedUrl.origin === window.location.origin) {
+                    window.history.replaceState(
+                        null,
+                        "",
+                        `${updatedUrl.pathname}${updatedUrl.search}${updatedUrl.hash}`);
+                }
+
+                const scrollPosition = window.scrollY;
+                currentDashboard.replaceWith(updatedDashboard);
+                window.scrollTo(0, scrollPosition);
+            } catch (error) {
+                console.error("Erro ao atualizar a tarefa:", error);
+                window.alert(error instanceof Error
+                    ? error.message
+                    : "Não foi possível atualizar a tarefa.");
+            } finally {
+                if (submitButton instanceof HTMLButtonElement) {
+                    submitButton.disabled = false;
+                }
+            }
+        });
+    </script>
+}

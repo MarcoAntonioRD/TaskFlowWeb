@@ -13,7 +13,7 @@ public class Tarefa
 {
     public int Id {get;  set;}
 
-    [Required(ErrorMessage = "Digite o titúlo da tarefa.")]
+    [Required(ErrorMessage = "Digite o título da tarefa.")]
     [StringLength(150)]
     public string Titulo {get; set;} = string.Empty;
 

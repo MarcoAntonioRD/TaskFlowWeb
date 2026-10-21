@@ -1,0 +1,43 @@
+@if (ViewBag.TotalPaginas > 1)
+{
+    <nav class="tf-pagination" aria-label="Navegação de páginas">
+        @if (ViewBag.PaginaAtual > 1)
+        {
+            <a href="@Url.Action("Index", new
+               {
+                   busca = ViewBag.Busca,
+                   prioridade = ViewBag.Prioridade,
+                   status = ViewBag.Status,
+                   pagina = ViewBag.PaginaAtual - 1
+               })" class="tf-page-link">
+                Anterior
+            </a>
+        }
+
+        @for (int i = 1; i <= ViewBag.TotalPaginas; i++)
+        {
+            <a href="@Url.Action("Index", new
+               {
+                   busca = ViewBag.Busca,
+                   prioridade = ViewBag.Prioridade,
+                   status = ViewBag.Status,
+                   pagina = i
+               })" class="tf-page-link @(i == ViewBag.PaginaAtual ? "active" : "")">
+                @i
+            </a>
+        }
+
+        @if (ViewBag.PaginaAtual < ViewBag.TotalPaginas)
+        {
+            <a href="@Url.Action("Index", new
+               {
+                   busca = ViewBag.Busca,
+                   prioridade = ViewBag.Prioridade,
+                   status = ViewBag.Status,
+                   pagina = ViewBag.PaginaAtual + 1
+               })" class="tf-page-link">
+                Próximo
+            </a>
+        }
+    </nav>
+}

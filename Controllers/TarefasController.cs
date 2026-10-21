@@ -15,36 +15,77 @@ public class TarefasController : Controller
         _context = context;
     }
 
-    public IActionResult Index(string? busca, string prioridade, string? status)
+
+    public IActionResult Index(string? busca, string? prioridade, string? status, int pagina)
     {
+        // Indicadores gerais do dashboard
+        ViewBag.TotalTarefas = _context.Tarefas.Count();
+
+        ViewBag.Pendentes = _context.Tarefas
+            .Count(t => !t.Concluida);
+
+        ViewBag.Concluidas = _context.Tarefas
+            .Count(t => t.Concluida);
+
+        ViewBag.PrioridadeAlta = _context.Tarefas
+            .Count(t => t.Prioridade == PrioridadeTarefa.Alta);
+
+        // Consulta usada para listar e filtrar as tarefas
         var consulta = _context.Tarefas.AsQueryable();
 
+        // Pesquisa pelo título
         if (!string.IsNullOrWhiteSpace(busca))
         {
-            consulta = consulta.Where(t => 
-            t.Titulo.Contains(busca.Trim()));
+            consulta = consulta.Where(t =>
+                t.Titulo.Contains(busca.Trim()));
         }
 
+        // Filtro por prioridade
         if (Enum.TryParse<PrioridadeTarefa>(
             prioridade, true, out var prioridadeSelecionada)
             && Enum.IsDefined(typeof(PrioridadeTarefa), prioridadeSelecionada))
         {
-            consulta = consulta.Where(t => t.Prioridade == prioridadeSelecionada);
+            consulta = consulta.Where(t =>
+                t.Prioridade == prioridadeSelecionada);
         }
 
-        if (status == "Pendente")
+        // Filtro por situação
+        if (status == "pendente")
+        {
+            consulta = consulta.Where(t => !t.Concluida);
+        }
+        else if (status == "concluida")
         {
             consulta = consulta.Where(t => t.Concluida);
         }
 
-        ViewBag.Buscar = busca;
+        // Mantém os valores selecionados na tela
+        ViewBag.Busca = busca;
         ViewBag.Prioridade = prioridade;
         ViewBag.Status = status;
 
-        var tarefas = consulta.ToList();
+        const int itensPorPagina = 10;
 
+        int totalTarefasFiltradas = consulta.Count();
+        ViewBag.TotalTarefasFiltradas = totalTarefasFiltradas;
+
+        int totalPaginas = Math.Max(
+            1,
+            (int)Math.Ceiling(totalTarefasFiltradas / (double)itensPorPagina));
+
+        pagina = Math.Clamp(pagina, 1, totalPaginas);
+        ViewBag.PaginaAtual = pagina;
+        ViewBag.TotalPaginas = totalPaginas;
+
+        var tarefas = consulta
+            .OrderBy(t => t.Id)
+            .Skip((pagina - 1) * itensPorPagina)
+            .Take(itensPorPagina)
+            .ToList();
+        
         return View(tarefas);
     }
+
 
     [HttpGet]
     public IActionResult Create()
@@ -80,7 +121,12 @@ public class TarefasController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult AlternarConclusao(int id)
+    public IActionResult AlternarConclusao(
+        int id,
+        int pagina = 1,
+        string? busca = null,
+        string? prioridade = null,
+        string? status = null)
     {
         var tarefa = _context.Tarefas.FirstOrDefault(t => t.Id == id);
 
@@ -93,12 +139,17 @@ public class TarefasController : Controller
 
         _context.SaveChanges();
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(Index), new { busca, prioridade, status, pagina });
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Excluir(int id)
+    public IActionResult Excluir(
+        int id,
+        int pagina = 1,
+        string? busca = null,
+        string? prioridade = null,
+        string? status = null)
     {
         var tarefa = _context.Tarefas.FirstOrDefault(t => t.Id == id);
 
@@ -110,7 +161,7 @@ public class TarefasController : Controller
         _context.Tarefas.Remove(tarefa);
         _context.SaveChanges();
 
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(Index), new { busca, prioridade, status, pagina });
     }
 
     [HttpGet]
